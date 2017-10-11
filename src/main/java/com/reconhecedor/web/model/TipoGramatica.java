@@ -121,14 +121,14 @@ public enum TipoGramatica {
 		} else if (this == GLC) {
 
 			// Não pode ter &.
-			// Exemplo: [abABS[^&]]{1,}
-			pattern = "[" + terminais + naoTerminais + inicioProducao + "[^&]]{1,}";
+			// Exemplo: [abABS]{1,}
+			pattern = "[" + terminais + naoTerminais + inicioProducao + "]{1,}";
 
 		} else if (this == GSC) {
 
 			// Não pode ter &.
-			// Exemplo: [abABS[^&]]{1,}
-			pattern = "[" + terminais + naoTerminais + inicioProducao + "[^&]]{1,}";
+			// Exemplo: [abABS]{1,}
+			pattern = "[" + terminais + naoTerminais + inicioProducao + "]{1,}";
 
 		} else if (this == GI) {
 

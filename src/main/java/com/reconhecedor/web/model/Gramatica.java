@@ -52,6 +52,9 @@ public class Gramatica {
 	 */
 	private boolean matchUserEntry(EntradaUsuario entradaUsuario, TipoGramatica tipoGramatica) {
 
+		// Indica se o LE possui ao menos um símbolo de início de produção.
+		boolean temInicioProducao = false;
+		
 		String inicioProducao = entradaUsuario.getInicioProducao();
 		String naoTerminais = entradaUsuario.getNaoTerminais();
 		String terminais = entradaUsuario.getTerminais();
@@ -78,6 +81,11 @@ public class Gramatica {
 					return false;
 				}				
 				
+				// Se o LE tem símbolo de início de produção.
+				if(lEStr.matches(inicioProducao)){
+					temInicioProducao = true;
+				}
+				
 				// Valida LD.
 				String[] listLD = lD.split(",");
 
@@ -102,6 +110,12 @@ public class Gramatica {
 				}
 			}
 		}
+		
+		// Se LE não tem nenhum início de produção.
+		if(!temInicioProducao){
+			return false;
+		}
+		
 		return true;
 	}
 
