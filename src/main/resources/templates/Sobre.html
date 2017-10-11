@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<head></head>
+
+<section layout:fragment="conteudo">
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="clearfix">
+				<h5 class="panel-title aw-titulo-panel">Motivação</h5>
+			</div>
+		</div>
+		<div class="panel-body">
+			<p>O objetivo deste trabalho é desenvolver um Reconhecedor de
+				gramáticas, baseado na Hierarquia de Chomsky. O reconhecimento
+				é feito baseado nas regras de produção informadas pelo usuário.
+			</p>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="clearfix">
+				<h5 class="panel-title aw-titulo-panel">Integrantes</h5>
+			</div>
+		</div>
+		<div class="panel-body">
+			<p>Rafael Fernando Rutsatz</p>
+			<p>Diego Rezek</p>
+			<p>Rodrigo Lucke</p>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="clearfix">
+				<h5 class="panel-title aw-titulo-panel">Desenvolvimento</h5>
+			</div>
+		</div>
+		<div class="panel-body">
+			<p>Trabalho desenvolvido na disciplina de Linguagens Formais.
+			</p>		
+			<p>Para o reconhecimento, é realizada uma análise usando a
+				Hierárquia de Chomsky, iniciando pelos níveis mais 
+				baixos, seguindo a seguinte ordem:
+			</p>
+			<ul>
+				<li>Gramática Regular</li>
+				<li>Gramática Livre de Contexto</li>
+				<li>Gramática Sensível ao Contexto</li>
+				<li>Gramática Irrestrita</li>
+			</ul>
+			
+		</div>
+	</div>
+</section>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+
+<head></head>
+
+<section layout:fragment="conteudo">
+
+	<form class="form-horizontal" method="POST" id="formulario" 
+		th:action="@{/reconhecer}" th:object="${entradaUsuario}" >
+	
+		<div layout:include="MensagemGeral"></div>
+		<div layout:include="MensagemErro"></div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="clearfix">
+					<h5 class="panel-title aw-titulo-panel">Gramática</h5>
+				</div>
+			</div>
+		
+			<div class="panel-body">
+
+				<div class="form-group">					
+					<div class="col-sm-1">
+						<label>G:({</label>
+					</div>
+					
+					<div class="col-sm-3"
+						th:classappend="${#fields.hasErrors('naoTerminais')} ? has-error">
+						<input type="text" class="form-control" id="naoTerminais"							
+							placeholder="Não Terminais" autofocus="autofocus"
+							th:field="*{naoTerminais}"/>
+					</div>
+					<div class="col-sm-1">
+						<label>},{</label>
+					</div>	
+					<div class="col-sm-3"
+						th:classappend="${#fields.hasErrors('terminais')} ? has-error">
+						<input type="text" class="form-control" id="terminais"							
+							placeholder="Terminais"
+							th:field="*{terminais}"/>
+					</div>
+					<div class="col-sm-1">
+						<label>}, P, </label>
+					</div>	
+
+					<div class="col-sm-2"
+						th:classappend="${#fields.hasErrors('inicioProducao')} ? has-error">
+						<input type="text" class="form-control" id="inicioProducao"
+							placeholder="Início Produção"
+							th:field="*{inicioProducao}"/>
+					</div>	
+					<div class="col-sm-1">
+						<label>)</label>
+					</div>	
+				
+				</div>
+				<p class="help-block">Exemplo: G:({A,B}, {a,b}, P, S)</p>			
+			</div>
+			
+		</div>	
+			
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="clearfix">
+					<h5 class="panel-title aw-titulo-panel">Regras de Produção</h5>					
+				</div>
+			</div>
+			<div class="panel-body">			
+				
+				<div>
+					
+					<div class="table-responsive">
+						<table class="table table-bordered table-striped" id="tabelaRegrasProducao">
+							<thead>
+								<tr>
+									<th class="text-center col-md-3 col-sm-3">LE</th>
+									<th class="col-md-1 col-sm-1"></th>
+									<th class="text-center col-md-7 col-sm-7">LD</th>
+									<th class="col-md-1 col-sm-1"></th>
+								</tr>
+							</thead>
+							<tbody>
+							
+								<tr th:each="producao, rowStat : *{regrasProducao}">
+									<td th:classappend="${#fields.hasErrors('regrasProducao[__${rowStat.index}__].LE')} ? has-error"><input th:field="*{regrasProducao[__${rowStat.index}__].LE}" type="text" class="form-control"/></td>
+									<td><label class="control-label text-center">=></label></td>
+									<td th:classappend="${#fields.hasErrors('regrasProducao[__${rowStat.index}__].LD')} ? has-error"><input th:field="*{regrasProducao[__${rowStat.index}__].LD}" type="text" class="form-control"/></td>
+									<td class="text-center">
+										<a class="btn btn-link btn-xs js-remover-row" title="Excluir" rel="tooltip"
+											data-placement="top">
+											<span class="glyphicon glyphicon-remove"></span>
+										</a>
+									</td>
+								</tr>							
+							
+							
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="4"><a class="btn btn-default" id="btnAddProducao" rel="tooltip"
+										data-placement="right" title="Adicionar Produção">+</a></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<p class="help-block">Exemplo: S => a, b, aA, aB</p>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					
+					<div class="col-sm-offset-4 col-sm-10">
+						<button type="submit" class="btn btn-default"
+						 >Reconhecer Gramática</button>
+					</div>
+										
+				</div>
+			</div>
+		</div>	
+				
+		
+	</form>
+</section>	
+</html>

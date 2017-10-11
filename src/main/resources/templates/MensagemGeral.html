@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div id="resposta" style="display: block" th:if="${!#strings.isEmpty(mensagem)}">
+	<div class="panel panel-default" >
+		<div class="panel-heading">
+			<div class="clearfix">
+				<h5 class="panel-title aw-titulo-panel">Resultado</h5>
+			</div>
+		</div>
+		<div class="panel-body" >
+			<div class="form-group">
+				<label for="resposta" class="col-sm-4 control-label"
+					th:text="${mensagem}">Gramática:</label>
+			</div>
+		</div>
+	</div>
+</div>		
+
+</html>
