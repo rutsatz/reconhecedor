@@ -17,6 +17,9 @@ import com.reconhecedor.web.service.GramaticaService;
 @RequestMapping("/reconhecer")
 public class ReconhecedorController {
 
+	/**
+	 * View principal do sistema.
+	 */
 	private static final String RECONHECER = "Reconhecer";
 
 	@Autowired
@@ -41,7 +44,7 @@ public class ReconhecedorController {
 	 * 
 	 * @param entradaUsuario
 	 * @return String
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@PostMapping
 	public ModelAndView reconhecer(@Validated EntradaUsuario entradaUsuario, Errors errors) throws Exception {
@@ -64,13 +67,17 @@ public class ReconhecedorController {
 
 		if (tipoGramatica == null) {
 			msg = "Gramática não reconhecida.";
+
 		} else {
 			msg = "Gramática reconhecida: " + tipoGramatica.getDescricao();
+			mv.addObject("reconheceu", true);
 		}
+
+		// Remover (apenas testes) @@
+		mv.addObject("reconheceu", true);
 
 		mv.addObject("mensagem", msg);
 
 		return mv;
 	}
-
 }

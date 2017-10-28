@@ -19,18 +19,51 @@ import org.springframework.stereotype.Component;
 @Component
 public class EntradaUsuario {
 
+	/**
+	 * Símbolos não terminais informados pelo usuário.
+	 */
 	@NotEmpty(message = "Símbolo não terminal deve ser informado!")
 	private String naoTerminais;
 
+	/**
+	 * Símbolos terminais informados pelo usuário.
+	 */
 	@NotEmpty(message = "Símbolo terminal deve ser informado!")
 	private String terminais;
 
+	/**
+	 * Símbolo de inicio de produção.
+	 */
 	@NotEmpty(message = "Símbolo de início de produção deve ser informado!")
 	private String inicioProducao;
 
+	/**
+	 * Lista com as Regras de Produção da gramática.
+	 */
 	@Valid
 	@NotEmpty(message = "Regras de produção devem ser informadas!")
 	private List<RegraProducao> regrasProducao;
+
+	/**
+	 * Lista com os símbolos não terminais.
+	 */
+	private String[] listNT;
+
+	/**
+	 * Lista com os símbolos terminais.
+	 */
+	private String[] listT;
+
+	/**
+	 * Símbolos não terminais limpos, formatados para usar em REGEX ou outras
+	 * expressões.
+	 */
+	private String formatedNT;
+
+	/**
+	 * Símbolos terminais formatados para usar em REGEX.
+	 */
+	private String formatedT;
 
 	/**
 	 * Construtor default para inicializar as regras de producao como LazyList.
@@ -40,19 +73,29 @@ public class EntradaUsuario {
 
 		regrasProducao = LazyList.decorate(new ArrayList<RegraProducao>(),
 				FactoryUtils.instantiateFactory(RegraProducao.class));
-		
+
 		// para testes.
 		// GR
-		 setNaoTerminais("A, B");
-		 setTerminais("a,b");
-		 setInicioProducao("S");
-		 regrasProducao.add(new RegraProducao("S", "aA , bB , a , b"));
-		 
+		setNaoTerminais("A, B, C");
+		setTerminais("a,b, c, t");
+		setInicioProducao("S");
+		// regrasProducao.add(new RegraProducao("S", "aA , bB , a , b"));
+
+		regrasProducao.add(new RegraProducao("S", "AA"));
+		regrasProducao.add(new RegraProducao("A", "BcB"));
+		 regrasProducao.add(new RegraProducao("B", "t"));
+
+		// regrasProducao.add(new RegraProducao("S", "AaA"));
+		// regrasProducao.add(new RegraProducao("A", "b"));
+		// regrasProducao.add(new RegraProducao("A", "Ba"));
+		// regrasProducao.add(new RegraProducao("B", "C , b"));
+		// regrasProducao.add(new RegraProducao("C", "c"));
+
 		// GLC
 		// setNaoTerminais("A, B");
 		// setTerminais("a,b");
 		// setInicioProducao("S");
-		// regrasProducao.add(new RegraProducao("B", "b , B"));
+		// regrasProducao.add(new RegraProducao("S", "b , B"));
 
 		// GSC
 		// setNaoTerminais("A, B");
@@ -72,16 +115,71 @@ public class EntradaUsuario {
 		return naoTerminais;
 	}
 
+	/**
+	 * Ao setar os NT, já gera a lista com os símbolos e formata para REGEX.
+	 * 
+	 * @param naoTerminais
+	 */
 	public void setNaoTerminais(String naoTerminais) {
-		this.naoTerminais = naoTerminais;
+
+		// Usa vírgula como separador padrão.
+		this.naoTerminais = naoTerminais.replaceAll("\\|", ",");
+
+		// inicio de produção entra como NT.
+		if (inicioProducao != null)
+			this.naoTerminais += "," + inicioProducao;
+
+		// Gera a lista.
+		listNT = this.naoTerminais.split(",");
+
+		// remove espaços.
+		for (int i = 0; i < listNT.length; i++) {
+			listNT[i] = listNT[i].trim();
+		}
+
+		// remover vírgulas e espaços.
+		String remover = ", ";
+		String aux = naoTerminais;
+
+		for (int i = 0; i < remover.length(); i++) {
+			// Remove os caracteres indesejados.
+			aux = aux.replace(String.valueOf(remover.charAt(i)), "");
+		}
+
+		this.formatedNT = aux;
 	}
 
 	public String getTerminais() {
 		return terminais;
 	}
 
+	/**
+	 * Ao setar os terminais, já gera a lista com os símbolos e formata para REGEX.
+	 * 
+	 * @param terminais
+	 */
 	public void setTerminais(String terminais) {
-		this.terminais = terminais;
+
+		// Usa vírgula como separador padrão.
+		this.terminais = terminais.replaceAll("\\|", ",");
+
+		// Gera a lista.
+		listT = this.terminais.split(",");
+
+		// remove espaços.
+		for (int i = 0; i < listT.length; i++) {
+			listT[i] = listT[i].trim();
+		}
+
+		// remover vírgulas e espaços.
+		String remover = ", ";
+		String aux = terminais;
+
+		for (int i = 0; i < remover.length(); i++) {
+			// Remove os caracteres indesejados.
+			aux = aux.replace(String.valueOf(remover.charAt(i)), "");
+		}
+		this.formatedT = aux;
 	}
 
 	public String getInicioProducao() {
@@ -98,6 +196,22 @@ public class EntradaUsuario {
 
 	public void setRegrasProducao(List<RegraProducao> regrasProducao) {
 		this.regrasProducao = regrasProducao;
+	}
+
+	public String[] getListNT() {
+		return listNT;
+	}
+
+	public String[] getListT() {
+		return listT;
+	}
+
+	public String getFormatedNT() {
+		return formatedNT;
+	}
+
+	public String getFormatedT() {
+		return formatedT;
 	}
 
 	@Override

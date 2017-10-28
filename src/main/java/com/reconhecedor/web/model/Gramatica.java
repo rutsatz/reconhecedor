@@ -1,12 +1,23 @@
 package com.reconhecedor.web.model;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe que representa uma gramática.
+ * 
+ * @author Rafael
+ *
+ */
 @Component
 public class Gramatica {
 
-	private TipoGramatica gramatica;
+	private TipoGramatica tipoGramatica;
 
 	/**
 	 * Guarda as strings digitadas pelo usuário.
@@ -14,19 +25,25 @@ public class Gramatica {
 	@Autowired
 	private EntradaUsuario entradaUsuario;
 
+	/**
+	 * Reconhece a gramatica informada pelo usuário.
+	 * 
+	 * @param entradaUsuario
+	 * @return O Tipo de gramática reconhecido.
+	 */
 	public TipoGramatica reconhecer(EntradaUsuario entradaUsuario) {
 
 		this.entradaUsuario = entradaUsuario;
 
-		TipoGramatica tipoGramatica;
-
-		tipoGramatica = identificarEntrada();
+		this.tipoGramatica = identificarEntrada();
 
 		return tipoGramatica;
 	}
 
 	/**
 	 * Verifica todas as gramáticas possíveis para tentar identificar.
+	 * 
+	 * @return O TipoGramatica se reconhecido.
 	 */
 	private TipoGramatica identificarEntrada() {
 
@@ -54,7 +71,7 @@ public class Gramatica {
 
 		// Indica se o LE possui ao menos um símbolo de início de produção.
 		boolean temInicioProducao = false;
-		
+
 		String inicioProducao = entradaUsuario.getInicioProducao();
 		String naoTerminais = entradaUsuario.getNaoTerminais();
 		String terminais = entradaUsuario.getTerminais();
@@ -65,66 +82,335 @@ public class Gramatica {
 
 		// Verifica todas as regras de produção informadas.
 		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
-			String lE = rp.getLE();
-			String lD = rp.getLD();
-
-			// formatar LE para ter somente a virgula. @@
+			// String lE = rp.getLE();
+			// String lD = rp.getLD();
 
 			// Valida LE.
-			String[] listLE = lE.split(",");
+			String[] listLE = rp.getListLE();
 
 			for (String lEStr : listLE) {
-				lEStr = lEStr.trim();
 				tipoGramatica.setLE(lEStr);
+
 				if (!lEStr.matches(tipoGramatica.getLERegexPattern())) {
-					System.out.println(tipoGramatica.getDescricao() + " (LE): " + lEStr + " - " + tipoGramatica.getLERegexPattern());
+					// System.out.println(tipoGramatica.getDescricao() + " (LE): " + lEStr + " - "
+					// + tipoGramatica.getLERegexPattern());
 					return false;
-				}				
-				
+				}
+
 				// Se o LE tem símbolo de início de produção.
-				if(lEStr.matches(inicioProducao)){
+				if (lEStr.matches(inicioProducao)) {
+
+					// Se tem mais de um inicio de produção, retorna false.
+					if (temInicioProducao)
+						return false;
+
 					temInicioProducao = true;
 				}
-				
+
 				// Valida LD.
-				String[] listLD = lD.split(",");
+				String[] listLD = rp.getListLD();
 
 				for (String lDStr : listLD) {
-					lDStr = lDStr.trim();
+
 					tipoGramatica.setLD(lDStr);
 
 					if (!lDStr.matches(tipoGramatica.getLDRegexPattern())) {
-						System.out.println(tipoGramatica.getDescricao() + " (LD): " + lDStr + " - " + tipoGramatica.getLDRegexPattern());
+						// System.out.println(tipoGramatica.getDescricao() + " (LD): " + lDStr + " - " +
+						// tipoGramatica.getLDRegexPattern());
 						return false;
-					}					
-					
+					}
+
 					// Se for GSC
 					if (tipoGramatica == TipoGramatica.GSC) {
 
 						// Verifica se LE <= LD
 						if (lEStr.length() > lDStr.length()) {
-							System.out.println(tipoGramatica.getDescricao() + " (LD): " + lEStr + " > " + lDStr);
+							// System.out.println(tipoGramatica.getDescricao() + " (LD): " + lEStr + " > " +
+							// lDStr);
 							return false;
 						}
 					}
 				}
 			}
 		}
-		
+
 		// Se LE não tem nenhum início de produção.
-		if(!temInicioProducao){
+		if (!temInicioProducao) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	public TipoGramatica getGramatica() {
-		return gramatica;
+	/**
+	 * Gerar uma sentenca baseado na gramática reconhecida.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public Sentenca gerarSentenca() throws Exception {
+
+		// Pilha usada para organizar temporáriamente as sentenças.
+		LinkedList<Sentenca> listSentencas = new LinkedList<>();
+
+		// Lista final das sentenças.
+		LinkedList<Sentenca> logList = new LinkedList<>();
+
+		// Limite máximo de iterações.
+		int nMax = 10000;
+
+		// Contador de iterações atual.
+		int x = 1;
+
+		// Próxima regra a ser pesquisada.
+		String nextStrRP = "";
+
+		RegraProducao rp;
+		RegraProducao nextRP;
+
+		// LD extraído.
+		String extractedLD;
+
+		String inicioProducao = entradaUsuario.getInicioProducao();
+		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+
+		Sentenca sentenca = null;
+
+		// Log com os passos da derivação.
+		String sentencaStr = inicioProducao;
+
+		// Começa procurando pela Regra de Produção inicial.
+		nextStrRP = inicioProducao;
+
+		// Extrai os símbolos de produção e adiciona na lista de
+		// sentenças.
+		do {
+
+			// Busca próxima Regra de Produção
+			nextRP = findRP(nextStrRP);
+
+			// extrai um LD aleatório da RP sorteada.
+			extractedLD = nextRP.randomLD();
+
+			// Tratar para GR e GLC extrair somente o NT.
+			if (tipoGramatica == TipoGramatica.GR || tipoGramatica == TipoGramatica.GLC) {
+
+				// Se tem Não Terminal, extrai.
+				if (hasNT(extractedLD)) {
+					sentenca = extractRandomNT(extractedLD);
+
+					// Se tem mais caracteres.
+//					if (!sentenca.getSentenca().equals(sentenca.getSimboloDerivacao())) {
+
+						// Adiciona o símbolo na lista.
+						listSentencas.push(sentenca);
+
+						// Adiciona no final da lista.
+						logList.add(sentenca.clone());
+
+						// Seta a próxima RP a ser extraída.
+						nextStrRP = sentenca.getSimboloDerivacao();
+
+						sentencaStr += " -> " + sentenca.getSentenca();
+
+//					}
+
+				} else {
+					sentenca = new Sentenca(extractedLD);
+
+					// Enquanto forem terminais, desempilha.
+					// while (sentenca.isTerminal() && !listSentencas.isEmpty()) {
+					while (!hasNT(sentenca.getSentenca()) && !listSentencas.isEmpty()) {
+
+						sentencaStr += " -> " + sentenca.getSentenca();
+
+						// Desempilha o último.
+						Sentenca sentencaAnterior = listSentencas.pop();
+
+						// System.out.println("sentencaAnterior->" + sentencaAnterior.getSentenca());
+
+						String novaSentenca = sentencaAnterior.getSentenca();
+						int indiceSubstituir = sentencaAnterior.getIndexSimboloDerivacao();
+
+						// Remove o NT, colocando a sentença que derivou em seu lugar.
+						novaSentenca = cutAndReplace(novaSentenca, sentenca.getSentenca(), indiceSubstituir,
+								indiceSubstituir + 1);
+
+						// Atualiza o elemento retirado da lista com a nova sentença.
+						sentencaAnterior.setSentenca(novaSentenca);
+
+						// System.out.println("novaSentenca->" + novaSentenca);
+
+						// Cria a nova sentença com os símbolos substituídos.
+						sentenca = new Sentenca(novaSentenca);
+
+					}
+
+					// Se ainda restaram NT, adiciona na lista novamente, para ser extraído na
+					// próxima iteração.
+					if (hasNT(sentenca.getSentenca())) {
+						Sentenca temp = extractRandomNT(sentenca.getSentenca());
+
+						// Extrai um próximo LD aleatório.
+						nextStrRP = temp.getSimboloDerivacao();
+						// Adiciona a nova Sentenca a lista.
+						listSentencas.push(temp);
+					}
+				}
+
+			} else {
+				// Demais gramáticas não precisa extrair NT.
+
+				// Busca a RP correspondente.
+				rp = findRP(extractedLD);
+
+				// Adiciona o símbolo na lista.
+				listSentencas.push(new Sentenca(extractedLD));
+
+			}
+
+			// Enquanto não atingiu o limite de iterações
+			// e possui Não Terminais para extrair
+			// e ainda existem sentenças na lista.
+			// } while (x++ < nMax && (!listSentencas.isEmpty() || finalList.isEmpty()));
+		} while (x++ < nMax && !listSentencas.isEmpty());
+
+		// System.out.println(listSentencas);
+		// System.out.println("Log operações --> " + sentencaStr);
+//		System.out.println("Log: " + logList.toString());
+
+		if (x > nMax) {
+			throw new Exception("Não foi possível gerar a sentença (Atingiu o limite máximo de iterações).");
+		}
+
+		// finalList.add(new Sentenca("T1"));
+		// finalList.add(new Sentenca("T2"));
+		// finalList.add(new Sentenca("T3"));
+
+//		listSentencas.push(sentenca);
+		
+		return sentenca;
 	}
 
-	public void setGramatica(TipoGramatica gramatica) {
-		this.gramatica = gramatica;
+	/**
+	 * Recebe a primeira String e recorta os caracteres não desejados nas posições
+	 * informadas nos indices iniciais e finais. Após, adiciona a segunda String no
+	 * local em que os caracteres dos indices foram removidos.
+	 * 
+	 * @param String
+	 *            com o texto original.
+	 * @param String
+	 *            a ser injetada nas posições dos indices.
+	 * @param int
+	 *            com a posição inicial a ser recortada.
+	 * @param int
+	 *            com a posição final a ser recortada.
+	 * @return Nova string ajustada.
+	 */
+	private String cutAndReplace(String str, String strSubs, int inicio, int fim) {
+		String newStr = "";
+		int pos = 0;
+		// Recorta o inicio da String.
+		for (int i = 0; i < inicio; i++) {
+			newStr += String.valueOf(str.charAt(i));
+		}
+		// Injeta nova String no meio.
+		for (int i = inicio; i < strSubs.length() + inicio; i++) {
+			newStr += String.valueOf(strSubs.charAt(pos));
+			pos++;
+		}
+		// Recorta o final.
+		for (int i = fim; i < str.length(); i++) {
+			newStr += String.valueOf(str.charAt(i));
+		}
+		return newStr;
+	}
+
+	/**
+	 * Extrai um NT randômico.
+	 * 
+	 * @param extractedLD
+	 * @return
+	 */
+	private Sentenca extractRandomNT(String extractedLD) {
+
+		String naoTerminais = "";
+
+		// Guarda as posições em que achou os NT.
+		ArrayList<Integer> pos = new ArrayList<>();
+
+		// Marca os NT existentes para serem sorteados.
+		for (int i = 0; i < extractedLD.length(); i++) {
+			String str = extractedLD.substring(i, i + 1);
+			for (int j = 0; j < entradaUsuario.getListNT().length; j++) {
+				String NT = entradaUsuario.getListNT()[j];
+				if (str.contains(NT)) {
+					naoTerminais += str;
+					pos.add(i);
+					continue;
+				}
+			}
+		}
+
+		// Qtd de NT q podem ser escolhidos.
+		int tam = pos.size();
+		// Escolhe algum.
+		int x = new Random().nextInt(tam);
+		// Pega o indice do escolhido.
+		int index = pos.get(x);
+		// Extrai não terminal.
+		String sentencaStr = extractedLD.substring(index, index + 1);
+
+		Sentenca sentenca = new Sentenca(extractedLD);
+		sentenca.setIndexSimboloDerivacao(index);
+		sentenca.setSimboloDerivacao(sentencaStr);
+
+		return sentenca;
+	}
+
+	/**
+	 * Verifica se a sentenca possui Não Terminais.
+	 * 
+	 * @param sentenca
+	 * @return Retorna true se tiver Não Terminais.
+	 */
+	private boolean hasNT(String sentenca) {
+		for (String str : entradaUsuario.getListNT()) {
+			if (sentenca.contains(str))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Busca a Regra de produção para o símbolo informado.
+	 * 
+	 * @return RegraProducao que contém o símbolo informado.
+	 * @throws Exception
+	 */
+	private RegraProducao findRP(String simb) throws Exception {
+
+		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+
+		// Percorre todas as regras de produção.
+		for (RegraProducao rp : regrasProducao) {
+			// Percorre as regras do LE.
+			for (String lEStr : rp.getListLE()) {
+				// Se encontrou o inicio de produção
+				if (lEStr.matches(simb)) {
+					return rp;
+				}
+			}
+		}
+		throw new Exception("Nenhuma Regra de Produção localizada para o símbolo " + simb);
+	}
+
+	public TipoGramatica getTipoGramatica() {
+		return tipoGramatica;
+	}
+
+	public void setTipoGramatica(TipoGramatica tipoGramatica) {
+		this.tipoGramatica = tipoGramatica;
 	}
 
 	public EntradaUsuario getEntradaUsuario() {

@@ -11,6 +11,12 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
+/**
+ * Classe principal da aplicação.
+ * 
+ * @author Rafael
+ *
+ */
 @SpringBootApplication
 public class ReconhecedorApplication {
 

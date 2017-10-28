@@ -1,5 +1,8 @@
 package com.reconhecedor.web.model;
 
+import java.util.Iterator;
+import java.util.Random;
+
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -18,8 +21,12 @@ public class RegraProducao {
 	private String LE;
 
 	@NotEmpty(message = "Lado direito da produção deve ser informado!")
-	@Pattern(regexp = "[\\w+-/*//& ]{1,}", message = "Lado Direito da produção somente permite letras, números ou os sinais de +, -, *, /, _ e &")
+	@Pattern(regexp = "[\\w+-/*//&| ]{1,}", message = "Lado Direito da produção somente permite letras, números ou os sinais de +, -, *, /, |, _ e &")
 	private String LD;
+
+	// Vetor com a lista de todos operadores.
+	private String[] listLE;
+	private String[] listLD;
 
 	public RegraProducao() {
 		super();
@@ -27,8 +34,19 @@ public class RegraProducao {
 
 	public RegraProducao(String lE, String lD) {
 		super();
-		LE = lE;
-		LD = lD;
+		setLE(lE);
+		setLD(lD);
+	}
+
+	/**
+	 * Extrai um operador aleatório.
+	 * 
+	 * @return Operador LD
+	 */
+	public String randomLD() {
+		int tam = listLD.length;
+		int x = new Random().nextInt(tam);
+		return listLD[x];
 	}
 
 	public String getLE() {
@@ -36,7 +54,16 @@ public class RegraProducao {
 	}
 
 	public void setLE(String lE) {
-		LE = lE;
+		// Usa vírgula como separador padrão.
+		LE = lE.replaceAll("\\|", ",");
+
+		// Gera a lista.
+		listLE = LE.split(",");
+
+		// remove espaços.
+		for (int i = 0; i < listLE.length; i++) {
+			listLE[i] = listLE[i].trim();
+		}
 	}
 
 	public String getLD() {
@@ -44,7 +71,23 @@ public class RegraProducao {
 	}
 
 	public void setLD(String lD) {
-		LD = lD;
+		// Usa vírgula como separador padrão.
+		LD = lD.replaceAll("\\|", ",");
+
+		listLD = LD.split(",");
+
+		// remove espaços.
+		for (int i = 0; i < listLD.length; i++) {
+			listLD[i] = listLD[i].trim();
+		}
+	}
+
+	public String[] getListLE() {
+		return listLE;
+	}
+
+	public String[] getListLD() {
+		return listLD;
 	}
 
 	@Override

@@ -39,18 +39,18 @@
 				<p>
 				<div th:unless="${status == null}">
 					<span style="font-weight: bold">HTTP Status: </span><span
-						th:text="${status}" /> (<span th:text="${error}" />)
+						th:text="${status}" ></span> (<span th:text="${error}" ></span>)
 				</div>
 				<div th:unless="${message == null}">
 					<span style="font-weight: bold">Message: </span><span
-						th:text="${message}" />
+						th:text="${message}" ></span>
 				</div>
 
 				<div th:unless="${exception == null}">
 					<span style="font-weight: bold">Exception: </span><span
-						th:text="${exception}" />
+						th:text="${exception}" ></span>
 				</div>
-				</p>
+				<p></p>
 				<p>
 					Clique aqui para voltar a <a th:href="@{/}">Página Inicial</a>
 				</p>

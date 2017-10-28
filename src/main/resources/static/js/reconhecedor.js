@@ -85,4 +85,59 @@ $(function() {
 	
 	$('[rel="tooltip"]').tooltip();
 	
+	
+	
+	// ### Gerar sentença ###
+	
+	var btnGerarSentenca = $('.js-gerar-sentenca');
+	var divTextoSentenca = $('.js-texto-sentenca');
+	var textSentenca;
+	
+	
+	// Gerar a sentença via ajax.
+	btnGerarSentenca.on('click', function(event){
+		event.preventDefault();
+		
+		btnGerarSentenca.addClass('disabled').text('Aguarde...');
+		
+		var response = $.ajax({
+			url : '/sentenca',
+			type : 'PUT',
+			contentType : "application/json;charset=utf-8",
+			timeout : 60000
+//			timeout : 0.0000001
+		});
+		
+		response.done(function(sentenca){
+//			console.log(result.texto);
+//			console.log(result);
+//			$.each(result, function(index, sentenca){
+//				console.log(sentenca.sentenca);
+//			});
+			
+			textSentenca = "Sentença gerada: " + sentenca.sentenca;
+			
+			divTextoSentenca.html(textSentenca).show('slow');	
+				
+			btnGerarSentenca.removeClass('disabled').text('Gerar Sentença');
+			
+//			console.log("request done");
+		});
+		
+		response.fail(function(jqXHR, textStatus, errorThrown){
+//			console.log(jqXHR);
+			$('.js-sentenca-error').html('Ops! Ocorreu um erro ao gerar a sentença. '
+					+ 'Tente revisar a gramática.').show();
+			
+			btnGerarSentenca.text('Não permitido').removeClass('btn-primary')
+				.addClass('btn-danger');
+//			console.log(textStatus);
+//			console.log(errorThrown);
+//			console.log("request fail");
+		});
+		
+	});
+	
+
+	
 });
