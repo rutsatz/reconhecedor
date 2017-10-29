@@ -1,18 +1,13 @@
 package com.reconhecedor.web.rest;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.reconhecedor.web.model.Gramatica;
 import com.reconhecedor.web.model.Sentenca;
 import com.reconhecedor.web.service.GramaticaService;
 
@@ -24,23 +19,13 @@ public class SentencaController {
 	private GramaticaService gramaticaService;
 
 	@PutMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Sentenca gerarSentenca(HttpServletResponse response) {
-
-		// Gramatica gramatica = gramaticaService.getGramatica();
-
-//		ArrayList<Sentenca> sentencas = new ArrayList<>();
-
-//		sentencas.add(gramaticaService.gerarSentenca());
-
+	public ResponseEntity<Object> gerarSentenca() {
 		try {
 			Sentenca sentenca = gramaticaService.gerarSentenca();
-			response.setStatus(HttpServletResponse.SC_OK);
-			return sentenca;
+			return new ResponseEntity<>( sentenca, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new Error(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return null;
 	}
-
 }

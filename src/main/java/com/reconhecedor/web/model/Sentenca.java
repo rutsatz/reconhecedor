@@ -24,6 +24,11 @@ public class Sentenca implements Cloneable {
 	private int indexSimboloDerivacao;
 
 	/**
+	 * Log com o histórico das derivações.
+	 */
+	private String log;
+	
+	/**
 	 * Construtor.
 	 * 
 	 * @param sentenca
@@ -63,6 +68,14 @@ public class Sentenca implements Cloneable {
 
 	public void setIndexSimboloDerivacao(int indexSimboloDerivacao) {
 		this.indexSimboloDerivacao = indexSimboloDerivacao;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
 	}
 
 	@Override

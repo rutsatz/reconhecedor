@@ -77,19 +77,10 @@ public class EntradaUsuario {
 		// para testes.
 		// GR
 		setNaoTerminais("A, B, C");
-		setTerminais("a,b, c, t");
+		setTerminais("a, b, c");
 		setInicioProducao("S");
-		// regrasProducao.add(new RegraProducao("S", "aA , bB , a , b"));
-
-		regrasProducao.add(new RegraProducao("S", "AA"));
-		regrasProducao.add(new RegraProducao("A", "BcB"));
-		 regrasProducao.add(new RegraProducao("B", "t"));
-
-		// regrasProducao.add(new RegraProducao("S", "AaA"));
-		// regrasProducao.add(new RegraProducao("A", "b"));
-		// regrasProducao.add(new RegraProducao("A", "Ba"));
-		// regrasProducao.add(new RegraProducao("B", "C , b"));
-		// regrasProducao.add(new RegraProducao("C", "c"));
+		regrasProducao.add(new RegraProducao("S", "S, aA, Aa"));
+		regrasProducao.add(new RegraProducao("A", "b, bA"));
 
 		// GLC
 		// setNaoTerminais("A, B");
@@ -126,7 +117,7 @@ public class EntradaUsuario {
 		this.naoTerminais = naoTerminais.replaceAll("\\|", ",");
 
 		// inicio de produção entra como NT.
-		if (inicioProducao != null)
+		if (inicioProducao != null && !this.naoTerminais.contains(inicioProducao))
 			this.naoTerminais += "," + inicioProducao;
 
 		// Gera a lista.

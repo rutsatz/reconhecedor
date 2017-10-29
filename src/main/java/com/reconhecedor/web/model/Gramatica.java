@@ -82,9 +82,6 @@ public class Gramatica {
 
 		// Verifica todas as regras de produção informadas.
 		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
-			// String lE = rp.getLE();
-			// String lD = rp.getLD();
-
 			// Valida LE.
 			String[] listLE = rp.getListLE();
 
@@ -145,16 +142,13 @@ public class Gramatica {
 	/**
 	 * Gerar uma sentenca baseado na gramática reconhecida.
 	 * 
-	 * @return
+	 * @return Sentença gerada.
 	 * @throws Exception
 	 */
 	public Sentenca gerarSentenca() throws Exception {
 
-		// Pilha usada para organizar temporáriamente as sentenças.
+		// Pilha usada para organizar as sentenças.
 		LinkedList<Sentenca> listSentencas = new LinkedList<>();
-
-		// Lista final das sentenças.
-		LinkedList<Sentenca> logList = new LinkedList<>();
 
 		// Limite máximo de iterações.
 		int nMax = 10000;
@@ -172,12 +166,11 @@ public class Gramatica {
 		String extractedLD;
 
 		String inicioProducao = entradaUsuario.getInicioProducao();
-		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
 
 		Sentenca sentenca = null;
 
 		// Log com os passos da derivação.
-		String sentencaStr = inicioProducao;
+		String sentencaStr = "<strong>" + inicioProducao + "</strong>";
 
 		// Começa procurando pela Regra de Produção inicial.
 		nextStrRP = inicioProducao;
@@ -200,34 +193,29 @@ public class Gramatica {
 					sentenca = extractRandomNT(extractedLD);
 
 					// Se tem mais caracteres.
-//					if (!sentenca.getSentenca().equals(sentenca.getSimboloDerivacao())) {
+					// if (!sentenca.getSentenca().equals(sentenca.getSimboloDerivacao())) {
 
-						// Adiciona o símbolo na lista.
-						listSentencas.push(sentenca);
+					// Adiciona o símbolo na lista.
+					listSentencas.push(sentenca);
 
-						// Adiciona no final da lista.
-						logList.add(sentenca.clone());
+					// Seta a próxima RP a ser extraída.
+					nextStrRP = sentenca.getSimboloDerivacao();
 
-						// Seta a próxima RP a ser extraída.
-						nextStrRP = sentenca.getSimboloDerivacao();
+					// Log.
+					sentencaStr += " -> <strong>" + sentenca.getSentenca() + "</strong> <small>("
+							+ sentenca.getSimboloDerivacao() + "-" + (sentenca.getIndexSimboloDerivacao() + 1)
+							+ ")</small>";
 
-						sentencaStr += " -> " + sentenca.getSentenca();
-
-//					}
+					// }
 
 				} else {
 					sentenca = new Sentenca(extractedLD);
 
 					// Enquanto forem terminais, desempilha.
-					// while (sentenca.isTerminal() && !listSentencas.isEmpty()) {
 					while (!hasNT(sentenca.getSentenca()) && !listSentencas.isEmpty()) {
-
-						sentencaStr += " -> " + sentenca.getSentenca();
 
 						// Desempilha o último.
 						Sentenca sentencaAnterior = listSentencas.pop();
-
-						// System.out.println("sentencaAnterior->" + sentencaAnterior.getSentenca());
 
 						String novaSentenca = sentencaAnterior.getSentenca();
 						int indiceSubstituir = sentencaAnterior.getIndexSimboloDerivacao();
@@ -236,10 +224,12 @@ public class Gramatica {
 						novaSentenca = cutAndReplace(novaSentenca, sentenca.getSentenca(), indiceSubstituir,
 								indiceSubstituir + 1);
 
+						// Log.
+						sentencaStr += " <- <del>" + sentencaAnterior.getSimboloDerivacao() + "</del> = <strong>"
+								+ sentenca.getSentenca() + "</strong> <small>(" + novaSentenca + ")</small>";
+
 						// Atualiza o elemento retirado da lista com a nova sentença.
 						sentencaAnterior.setSentenca(novaSentenca);
-
-						// System.out.println("novaSentenca->" + novaSentenca);
 
 						// Cria a nova sentença com os símbolos substituídos.
 						sentenca = new Sentenca(novaSentenca);
@@ -266,29 +256,18 @@ public class Gramatica {
 
 				// Adiciona o símbolo na lista.
 				listSentencas.push(new Sentenca(extractedLD));
-
 			}
 
 			// Enquanto não atingiu o limite de iterações
 			// e possui Não Terminais para extrair
-			// e ainda existem sentenças na lista.
-			// } while (x++ < nMax && (!listSentencas.isEmpty() || finalList.isEmpty()));
 		} while (x++ < nMax && !listSentencas.isEmpty());
-
-		// System.out.println(listSentencas);
-		// System.out.println("Log operações --> " + sentencaStr);
-//		System.out.println("Log: " + logList.toString());
 
 		if (x > nMax) {
 			throw new Exception("Não foi possível gerar a sentença (Atingiu o limite máximo de iterações).");
 		}
 
-		// finalList.add(new Sentenca("T1"));
-		// finalList.add(new Sentenca("T2"));
-		// finalList.add(new Sentenca("T3"));
-
-//		listSentencas.push(sentenca);
-		
+		// listSentencas.push(sentenca);
+		sentenca.setLog(sentencaStr);
 		return sentenca;
 	}
 

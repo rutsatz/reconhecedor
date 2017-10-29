@@ -1,7 +1,5 @@
 package com.reconhecedor.web.service;
 
-import java.util.LinkedList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +27,7 @@ public class GramaticaService {
 	 * @return Tipo da gramática reconhecida.
 	 */
 	public TipoGramatica reconhecer(EntradaUsuario entradaUsuario) {
-
 		TipoGramatica tipoGramatica = gramatica.reconhecer(entradaUsuario);
-
 		return tipoGramatica;
 	}
 
@@ -39,7 +35,7 @@ public class GramaticaService {
 	 * Serviço de gerar sentença.
 	 * 
 	 * @return A sentença gerada.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public Sentenca gerarSentenca() throws Exception {
 		return gramatica.gerarSentenca();
@@ -52,5 +48,4 @@ public class GramaticaService {
 	public void setGramatica(Gramatica gramatica) {
 		this.gramatica = gramatica;
 	}
-
 }

@@ -85,14 +85,12 @@ $(function() {
 	
 	$('[rel="tooltip"]').tooltip();
 	
-	
-	
 	// ### Gerar sentença ###
-	
 	var btnGerarSentenca = $('.js-gerar-sentenca');
 	var divTextoSentenca = $('.js-texto-sentenca');
-	var textSentenca;
-	
+	var divLogSentenca = $('.js-log-sentenca');
+	var textSentenca; // Texto com a sentença gerada
+	var textLog; // Texto com o histórico de derivações.
 	
 	// Gerar a sentença via ajax.
 	btnGerarSentenca.on('click', function(event){
@@ -109,35 +107,27 @@ $(function() {
 		});
 		
 		response.done(function(sentenca){
-//			console.log(result.texto);
-//			console.log(result);
 //			$.each(result, function(index, sentenca){
 //				console.log(sentenca.sentenca);
 //			});
 			
-			textSentenca = "Sentença gerada: " + sentenca.sentenca;
-			
-			divTextoSentenca.html(textSentenca).show('slow');	
-				
+			textSentenca = "Sentença gerada: <strong>" + sentenca.sentenca+"</strong>";			
+			divTextoSentenca.html(textSentenca).show('slow', function(){
+				textLog = "Histórico de derivações: " + sentenca.log;
+				divLogSentenca.html(textLog).show('slow');
+			});	
+							
 			btnGerarSentenca.removeClass('disabled').text('Gerar Sentença');
-			
-//			console.log("request done");
 		});
 		
-		response.fail(function(jqXHR, textStatus, errorThrown){
-//			console.log(jqXHR);
-			$('.js-sentenca-error').html('Ops! Ocorreu um erro ao gerar a sentença. '
-					+ 'Tente revisar a gramática.').show();
+		response.fail(function(jqXHR){
+			var jsonResponse = JSON.parse(jqXHR.responseText);
+			
+			$('.js-sentenca-error').html('<p>Ops! Ocorreu um erro ao gerar a sentença.</p>'
+					+ '<br/><p>' + jsonResponse.message + "</p>").show('slow');
 			
 			btnGerarSentenca.text('Não permitido').removeClass('btn-primary')
 				.addClass('btn-danger');
-//			console.log(textStatus);
-//			console.log(errorThrown);
-//			console.log("request fail");
 		});
-		
 	});
-	
-
-	
 });
