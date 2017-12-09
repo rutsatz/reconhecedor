@@ -14,7 +14,7 @@
 		<div layout:include="MensagemGeral"></div>
 		<div layout:include="MensagemErro"></div>
 		
-		<div class="panel panel-primary" th:if="${reconheceu}">
+		<div class="panel panel-default" th:if="${reconheceu}">
 			<div class="panel-heading">
 				<div class="clearfix">
 					<h5 class="panel-title aw-titulo-panel">Sentenças</h5>
@@ -24,27 +24,60 @@
 			<div class="panel-body">
 			
 				<div class="form-group">
-					<div class="alert alert-danger js-sentenca-error" role="alert" style="display: none">
+					<div class="alert alert-default js-sentenca-error" role="alert" style="display: none">
 						Ops! Ocorreu um erro!
 					</div>
-					<div class="alert alert-success js-texto-sentenca" role="alert" style="display: none">
+					<div class="alert alert-default js-texto-sentenca" role="alert" style="display: none">
 						Esse é meu texto
 					</div>
-					<div class="alert alert-info js-log-sentenca" role="alert" style="display: none">
+					<div class="alert alert-default js-log-sentenca" role="alert" style="display: none">
 						LOG
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-sm-10">
-						<button class="btn btn-primary js-gerar-sentenca"
+						<button class="btn btn-default js-gerar-sentenca"
 							type="submit">Gerar Senteça</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
+
+		<div class="panel panel-default" th:if="${reconheceu}">
+			<div class="panel-heading">
+				<div class="clearfix">
+					<h5 class="panel-title aw-titulo-panel">Transformação em GLC</h5>
+				</div>
+			</div>
+			
+			<div class="panel-body">
+			
+				<div class="form-group">
+					<div class="alert alert-default js-transformacao-error" role="alert" style="display: none">
+						Ops! Ocorreu um erro!
+					</div>
+					<div class="alert alert-default js-texto-transformacao" role="alert" style="display: none">
+						Esse é meu texto
+					</div>
+					<div class="alert alert-default js-log-transformacao" role="alert" style="display: none">
+						LOG
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-sm-10">
+						<button class="btn btn-default js-transformacao"
+							type="submit">Transformação GLC</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
 		
-		<div class="panel panel-primary">
+		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="clearfix">
 					<h5 class="panel-title aw-titulo-panel">Gramática</h5>
@@ -93,7 +126,7 @@
 			
 		</div>	
 			
-		<div class="panel panel-primary">
+		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="clearfix">
 					<h5 class="panel-title aw-titulo-panel">Regras de Produção</h5>					
@@ -131,7 +164,7 @@
 							</tbody>
 							<tfoot>
 								<tr>
-									<td colspan="4"><a class="btn btn-success" id="btnAddProducao" rel="tooltip"
+									<td colspan="4"><a class="btn btn-default" id="btnAddProducao" rel="tooltip"
 										data-placement="right" title="Adicionar Produção">+</a></td>
 								</tr>
 								<tr>
@@ -144,7 +177,7 @@
 					</div>
 					
 					<div class="col-sm-offset-4 col-sm-10">
-						<button type="submit" class="btn btn-primary"
+						<button type="submit" class="btn btn-default"
 						 >Reconhecer Gramática</button>
 					</div>
 										

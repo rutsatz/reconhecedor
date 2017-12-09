@@ -1,6 +1,7 @@
 package com.reconhecedor.web.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -269,6 +270,203 @@ public class Gramatica {
 		// listSentencas.push(sentenca);
 		sentenca.setLog(sentencaStr);
 		return sentenca;
+	}
+
+	// Transformação em GLC
+
+	public Sentenca transformacaoGLC() throws Exception {
+		StringBuilder builder = new StringBuilder();
+
+		// Passo 1
+		List<RegraProducao> newList = removerSimbolosInuteis();
+		entradaUsuario.setRegrasProducao(newList);
+
+		builder.append("Passo 1 - Eliminar símbolos inúteis.<br>");
+		builder.append("P':{");
+		for (RegraProducao rp : newList) {
+			builder.append("<br>" + rp.getLE() + " -> " + rp.getLD());
+		}
+		builder.append("}");
+
+		// Passo 2
+		newList = removerSimbolosInalcansaveis();
+		entradaUsuario.setRegrasProducao(newList);
+
+		builder.append("<br><br>");
+		builder.append("Passo 2 - Eliminar símbolos Inalcansáveis.<br>");
+		builder.append("P':{");
+		for (RegraProducao rp : newList) {
+			builder.append("<br>" + rp.getLE() + " -> " + rp.getLD());
+		}
+		builder.append("}");
+
+		return new Sentenca(builder.toString());
+	}
+
+	/**
+	 * Eliminar símbolos inalcansáveis. (2) 2
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private List<RegraProducao> removerSimbolosInalcansaveis() throws Exception {
+
+		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+		List<RegraProducao> newList = new LinkedList<>();
+
+		RegraProducao rp;
+
+		// Lista de símbolos inalcansáveis.
+		List<String> inalcansaveis = new LinkedList<>();
+
+		// Lista de símbolos derivados no LD.
+		List<String> derivacoes = new LinkedList<>();
+
+		// Percorre todas as regras de produção.
+		for (int i = 0; i < regrasProducao.size(); i++) {
+			rp = regrasProducao.get(i);
+			// Percorre todo o LD da produção.
+			for (int j = 0; j < rp.getListLD().length; j++) {
+				String strLD = rp.getListLD()[j];
+
+				// Se tem T e NT ou somente NT
+				if (hasNT(strLD)) {
+					// Percorre cada letra da derivação
+					for (int k = 0; k < strLD.length(); k++) {
+						String simbLD = strLD.substring(k, k + 1);
+
+						if (entradaUsuario.isNT(simbLD)) {
+
+							// Busca a regra gerada.
+							RegraProducao derivado = findRP(simbLD);
+
+							// Se for um NT derivado e ainda não estiver na lista.
+							if (entradaUsuario.isNT(simbLD) && !derivacoes.contains(simbLD)) {
+								derivacoes.add(simbLD);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		System.out.println("Derivações:");
+		System.out.println(derivacoes);
+
+		// Percorre todas as regras de produção.
+		for (int i = 0; i < derivacoes.size(); i++) {
+			String str = derivacoes.get(i);
+			rp = findRP(str);
+			newList.add(rp);
+		}
+
+		return newList;
+	}
+
+	// @@ Eliminar simbolos inúteis.
+	/**
+	 * Eliminar símbolos inúteis. (1) 1
+	 */
+	private List<RegraProducao> removerSimbolosInuteis() throws Exception {
+
+		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+		List<RegraProducao> newList = new LinkedList<>();
+
+		RegraProducao rp;
+
+		// Lista de símbolos ferteis.
+		List<String> ferteis = new LinkedList<>();
+
+		// Percorre todas as regras de produção.
+		for (int i = 0; i < regrasProducao.size(); i++) {
+			rp = regrasProducao.get(i);
+
+			// Percorre todo o LD da produção.
+			for (int j = 0; j < rp.getListLD().length; j++) {
+				String strLD = rp.getListLD()[j];
+
+				// Se tem T e NT ou somente NT
+				if (hasNT(strLD)) {
+					// Percorre cada letra da derivação
+					for (int k = 0; k < strLD.length(); k++) {
+						String simbLD = strLD.substring(k, k + 1);
+
+						// Se é um NT e não é o próprio símbolo.
+						if (hasNT(simbLD) && !rp.getLE().equals(simbLD)) {
+							// Verifica se o NT é de alguma
+							// produção.
+							for (int k2 = 0; k2 < regrasProducao.size(); k2++) {
+								RegraProducao rpAux = regrasProducao.get(k2);
+								// System.out.println("simbLD: " + simbLD);
+								// System.out.println("rpAux.getLE(): " + rpAux.getLE());
+								// System.out.println("rp.getLE(): " + rp.getLE());
+								// System.out.println();
+								// Se for uma produção e não for a própria produção.
+								if (rp.getLE().equals(simbLD)
+
+								) {
+
+									// if se LD é válido.
+									// aí adiciona.
+									// pra ver se é válido, acho que é só ver se
+									// o LD TEM um NT diferente do próprio LE.
+
+									// System.out.println(">" + rpAux.getLE() + "<");
+									// System.out.println(">>>" + simbLD + "<<<");
+									if (!ferteis.contains(simbLD)) {
+										// System.out.println("*** add "+simbLD+"****");
+										ferteis.add(simbLD);
+
+									}
+								}
+							}
+						}
+					}
+					// Tem terminal, então não é um símbolo estéril.
+				} else {
+					if (!ferteis.contains(rp.getLE())) {
+						// System.out.println("### add else: rp.getLE()=" +rp.getLE() + "");
+						ferteis.add(rp.getLE());
+					}
+				}
+			}
+		}
+
+		// Percorre todas as regras, deixando somente as férteis.
+		for (int i = 0; i < regrasProducao.size(); i++) {
+			rp = regrasProducao.get(i);
+
+			// Percorre os simbolos férteis
+			for (int j = 0; j < ferteis.size(); j++) {
+				String simbFer = ferteis.get(j);
+
+				boolean achou = false;
+
+				// Se for fértil, adiciona na nova lista.
+				if (rp.getLE().equals(simbFer)) {
+					newList.add(rp);
+				}
+
+				// Lista dos NT da sentença do LD.
+				List<String> somenteNT = rp.getListLD_NT(ferteis);
+
+				// Percorre todos LD e se não for fértil, remove do LD.
+				for (int k = 0; k < rp.getListLD().length; k++) {
+					String strLD = rp.getListLD()[k];
+					if (strLD.contains(simbFer)) {
+						achou = true;
+					}
+				}
+
+				if (!achou) {
+					System.out.println("Não achou >>> " + simbFer);
+				}
+			}
+
+		}
+
+		System.out.println("Férteis: " + ferteis);
+		return newList;
 	}
 
 	/**

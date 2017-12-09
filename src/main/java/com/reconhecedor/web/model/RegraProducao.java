@@ -1,6 +1,8 @@
 package com.reconhecedor.web.model;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import javax.validation.constraints.Pattern;
@@ -80,6 +82,37 @@ public class RegraProducao {
 		for (int i = 0; i < listLD.length; i++) {
 			listLD[i] = listLD[i].trim();
 		}
+	}
+
+	/**
+	 * Recebe os NT válidos como parametro e retorna a lista com somente os NT do
+	 * LD.
+	 * 
+	 * @param listNT
+	 * @return
+	 */
+	public List<String> getListLD_NT(List<String> ferteis) {
+
+		LinkedList<String> list = new LinkedList<>();
+
+		// Percorre a lista do parâmetro
+		for (int i = 0; i < ferteis.size(); i++) {
+			// Percorre a lista de NT.
+			for (int j = 0; j < listLD.length; j++) {
+				String strLD = listLD[j];
+				// Percorre cada símbolo da sentença.
+				for (int k = 0; k < strLD.length(); k++) {
+					String strSimb = strLD.substring(k, k + 1);
+					// Verifica se existe na lista de NT válidos.
+					if (ferteis.get(i).equals(strLD)) {
+						list.add(ferteis.get(i));
+					}
+				}
+			}
+		}
+
+		System.out.println(list);
+		return list;
 	}
 
 	public String[] getListLE() {

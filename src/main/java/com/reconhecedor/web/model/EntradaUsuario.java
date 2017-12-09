@@ -76,11 +76,14 @@ public class EntradaUsuario {
 
 		// para testes.
 		// GR
-		setNaoTerminais("A, B, C");
-		setTerminais("a, b, c");
+		setNaoTerminais("S, A, B, C, D");
+		setTerminais("a, b, c, d");
 		setInicioProducao("S");
-		regrasProducao.add(new RegraProducao("S", "S, aA, Aa"));
-		regrasProducao.add(new RegraProducao("A", "b, bA"));
+		regrasProducao.add(new RegraProducao("S", "aA"));
+		regrasProducao.add(new RegraProducao("A", "a, bB"));
+		regrasProducao.add(new RegraProducao("B", "b"));
+		regrasProducao.add(new RegraProducao("C", "cC, c"));
+		regrasProducao.add(new RegraProducao("D", "dD"));
 
 		// GLC
 		// setNaoTerminais("A, B");
@@ -100,6 +103,20 @@ public class EntradaUsuario {
 		// setInicioProducao("S");
 		// regrasProducao.add(new RegraProducao("AA", "b , &"));
 
+	}
+
+	/**
+	 * Verifica se o símbolo informado é um NT.
+	 * 
+	 * @param String
+	 * @return true se for um Não Terminal.
+	 */
+	public boolean isNT(String simb) {
+		for (String string : listNT) {
+			if (string.equals(simb))
+				return true;
+		}
+		return false;
 	}
 
 	public String getNaoTerminais() {

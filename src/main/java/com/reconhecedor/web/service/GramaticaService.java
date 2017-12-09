@@ -41,6 +41,15 @@ public class GramaticaService {
 		return gramatica.gerarSentenca();
 	}
 
+	/**
+	 * Serviço de transformação em GLC.
+	 * @return
+	 * @throws Exception
+	 */
+	public Sentenca transformacaoGLC() throws Exception{
+		return gramatica.transformacaoGLC();
+	}
+	
 	public Gramatica getGramatica() {
 		return gramatica;
 	}

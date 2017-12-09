@@ -129,5 +129,54 @@ $(function() {
 			btnGerarSentenca.text('Não permitido').removeClass('btn-primary')
 				.addClass('btn-danger');
 		});
+		
 	});
+		
+		// ### Transformação GLC ###
+		var btnTransformacao = $('.js-transformacao');
+		var divTextoTransformacao = $('.js-texto-transformacao');
+		var divLogTransformacao = $('.js-log-transformacao');
+		var textTransformacao; // Texto com a transformacao gerada
+		var textLogTransformacao; // Texto com o histórico de transformacao.
+		
+		// Transformacao via ajax.
+		btnTransformacao.on('click', function(event){
+			event.preventDefault();
+			
+			btnTransformacao.addClass('disabled').text('Aguarde...');
+			
+			var response = $.ajax({
+				url : '/transformacao',
+				type : 'PUT',
+				contentType : "application/json;charset=utf-8",
+				timeout : 60000
+//				timeout : 0.0000001
+			});
+			
+			response.done(function(sentenca){
+						
+				textTransformacao = "Transformação gerada: <strong>" + sentenca.sentenca+"</strong>";			
+				divTextoTransformacao.html(textTransformacao).show('slow');	
+					
+//				, function(){
+//					textLogTransformacao = "Histórico de Transformação: " + sentenca.log;
+//					divLogTransformacao.html(textLogTransformacao).show('slow');
+//				}
+								
+				btnTransformacao.removeClass('disabled').text('Transformação GLC');
+			});
+			
+			response.fail(function(jqXHR){
+				var jsonResponse = JSON.parse(jqXHR.responseText);
+//				console.log("errinho");
+				$('.js-transformacao-error').html('<p>Ops! Ocorreu um erro na Transformação GLC.</p>'
+						+ '<br/><p>' + jsonResponse.message + "</p>").show('slow');
+				
+				btnTransformacao.text('Não permitido').removeClass('btn-primary')
+					.addClass('btn-danger');
+			});
+					
+	
+		});	
+		
 });
