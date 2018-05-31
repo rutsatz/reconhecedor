@@ -24,6 +24,7 @@
 			<div class="collapse navbar-collapse" id="cabecalho-navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li th:classappend="${#httpServletRequest.getRequestURI() == '/reconhecer' ? 'active' : ''}"><a th:href="@{/reconhecer}">Reconhecer<span class="sr-only">(current)</span></a></li>
+					<li th:classappend="${#httpServletRequest.getRequestURI() == '/instrucoes' ? 'active' : ''}"><a th:href="@{/instrucoes}">Instruções<span class="sr-only">(current)</span></a></li>
 					<li th:classappend="${#httpServletRequest.getRequestURI() == '/sobre' ? 'active' : ''}"><a th:href="@{/sobre}">Sobre</a></li>
 				</ul>
 			</div>	

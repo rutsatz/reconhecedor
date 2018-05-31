@@ -26,6 +26,21 @@ public class Gramatica {
 	@Autowired
 	private EntradaUsuario entradaUsuario;
 
+	public String conjuntoFirst() {
+		System.out.println("Método first");
+		return null;
+	}
+
+	public String conjuntoFollow() {
+		System.out.println("Método follow");
+		return null;
+	}
+
+	public String analisePreditivaTabular() {
+		System.out.println("Tabela preditiva tabular");
+		return null;
+	}	
+	
 	/**
 	 * Reconhece a gramatica informada pelo usuário.
 	 * 
@@ -597,4 +612,5 @@ public class Gramatica {
 	public void setEntradaUsuario(EntradaUsuario entradaUsuario) {
 		this.entradaUsuario = entradaUsuario;
 	}
+
 }

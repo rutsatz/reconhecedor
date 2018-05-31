@@ -178,5 +178,52 @@ $(function() {
 					
 	
 		});	
+	
+		
+		// ### Análise Preditiva Tabular ###
+		var btnAnalise = $('.js-analise');
+		var divTextoAnalise = $('.js-texto-analise');
+		var divLogAnalise = $('.js-log-analise');
+		var textAnalise; // Texto com a transformacao gerada
+		var textLogAnalise; // Texto com o histórico de transformacao.
+		
+		// Transformacao via ajax.
+		btnAnalise.on('click', function(event){
+			event.preventDefault();
+			
+			btnAnalise.addClass('disabled').text('Aguarde...');
+			
+			var response = $.ajax({
+				url : '/analise',
+				type : 'PUT',
+				contentType : "application/json;charset=utf-8",
+				timeout : 60000
+//				timeout : 0.0000001
+			});
+			
+			response.done(function(sentenca){
+						
+				textAnalise = "Tabela gerada: <strong>" + sentenca.sentenca+"</strong>";			
+				divTextoAnalise.html(textAnalise).show('slow');	
+					
+//				, function(){
+//					textLogTransformacao = "Histórico de Transformação: " + sentenca.log;
+//					divLogTransformacao.html(textLogTransformacao).show('slow');
+//				}
+								
+				btnAnalise.removeClass('disabled').text('Análise Preditiva Tabular');
+			});
+			
+			response.fail(function(jqXHR){
+				var jsonResponse = JSON.parse(jqXHR.responseText);
+//				console.log("errinho");
+				$('.js-analise-error').html('<p>Ops! Ocorreu um erro ao gerar a Análise Preditiva Tabular.</p>'
+						+ '<br/><p>' + jsonResponse.message + "</p>").show('slow');
+				
+				btnAnalise.text('Não permitido').removeClass('btn-primary')
+					.addClass('btn-danger');
+			});
+	
+		});	
 		
 });

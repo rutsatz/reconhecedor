@@ -82,8 +82,8 @@ public class EntradaUsuario {
 		regrasProducao.add(new RegraProducao("S", "aA"));
 		regrasProducao.add(new RegraProducao("A", "a, bB"));
 		regrasProducao.add(new RegraProducao("B", "b"));
-		regrasProducao.add(new RegraProducao("C", "cC, c"));
-		regrasProducao.add(new RegraProducao("D", "dD"));
+		regrasProducao.add(new RegraProducao("C", "cD, c"));
+		regrasProducao.add(new RegraProducao("D", "d"));
 
 		// GLC
 		// setNaoTerminais("A, B");

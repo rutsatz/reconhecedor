@@ -50,6 +50,36 @@ public class GramaticaService {
 		return gramatica.transformacaoGLC();
 	}
 	
+	/**
+	 * Gera Conjunto First.
+	 * 
+	 * @return Os dados da tabela.
+	 * @throws Exception
+	 */
+	public String conjuntoFirst() throws Exception {
+		return gramatica.conjuntoFirst();
+	}	
+	
+	/**
+	 * Gera Conjunto Follow.
+	 * 
+	 * @return Os dados da tabela.
+	 * @throws Exception
+	 */
+	public String conjuntoFollow() throws Exception {
+		return gramatica.conjuntoFollow();
+	}
+	
+	/**
+	 * Serviço de Análise Preditiva Tabular.
+	 * 
+	 * @return Os dados da tabela.
+	 * @throws Exception
+	 */
+	public String analisePreditivaTabular() throws Exception {
+		return gramatica.analisePreditivaTabular();
+	}
+	
 	public Gramatica getGramatica() {
 		return gramatica;
 	}

@@ -72,9 +72,6 @@ public class ReconhecedorController {
 			msg = "Gramática reconhecida: " + tipoGramatica.getDescricao();
 			mv.addObject("reconheceu", true);
 		}
-		
-		// Remover (apenas testes) @@
-		mv.addObject("reconheceu", true);
 
 		mv.addObject("mensagem", msg);
 
