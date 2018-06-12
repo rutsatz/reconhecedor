@@ -1,7 +1,7 @@
 package com.reconhecedor.web.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +20,8 @@ public class Gramatica {
 
 	private TipoGramatica tipoGramatica;
 
+	HashMap<String, List<String>> mapFirst = new HashMap<>();
+
 	/**
 	 * Guarda as strings digitadas pelo usuário.
 	 */
@@ -27,8 +29,94 @@ public class Gramatica {
 	private EntradaUsuario entradaUsuario;
 
 	public String conjuntoFirst() {
+
 		System.out.println("Método first");
+
+		// Procura primeiro o first de entradas simples.
+		// Quando os first forem compostos de terminais.
+		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
+			int rpSize = rp.getListLD().length; // Tamanho de cada LD.
+			int totTerminais = 0; // Acumulador auxiliar
+			ArrayList<String> rpFirst = new ArrayList<>(); // Guarda os simbolos first.
+			// Avalia cada corpo do LD.
+			for (int i = 0; i < rpSize; i++) {
+				String simbolo = rp.getListLD()[i];
+				String first = simbolo.substring(0, 1); // Extrai o primeiro simbolo.
+				// Se o simbolo avaliado for terminal.
+				if (entradaUsuario.isTerminal(first) || entradaUsuario.isSentencaVazia(first)) {
+					rpFirst.add(first);
+					totTerminais++;
+				}
+			}
+
+			// Se todos os first forem terminais, adiciona na lista.
+			if (rpSize == totTerminais) {
+				mapFirst.put(rp.getLE(), rpFirst);
+			}
+		}
+
+		// Depois de encontrar os terminais, busca pelo restante (NT)
+		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
+			ArrayList<String> rpFirst = new ArrayList<>(); // Guarda os simbolos first.
+
+			String LE = rp.getLE();
+
+			findFirstFromSymbol(rp);
+
+		}
+
+		System.out.println(mapFirst);
+
 		return null;
+	}
+
+	private List<String> findFirstFromSymbol(RegraProducao rp) {
+
+//		System.out.println("findFirstFromSymbol receiving rp: " + rp);
+		
+		ArrayList<String> rpFirst = new ArrayList<>(); // Guarda os simbolos first.
+
+		String LE = rp.getLE();
+
+		// Se ainda não encontro o first do LE.
+		if (mapFirst.get(LE) == null) {
+			int rpSize = rp.getListLD().length; // Tamanho de cada LD.
+			// Avalia cada corpo do LD.
+			for (int i = 0; i < rpSize; i++) {
+				String simbolo = rp.getListLD()[i];
+				String first = simbolo.substring(0, 1); // Extrai o primeiro simbolo.
+				// Se o simbolo avaliado for NT.
+				if (entradaUsuario.isNT(first)) {
+
+					try {
+						// Busca a próxima RP que ele deriva.
+						RegraProducao nextRP = findRP(first);
+//						System.out.println("Buscando first: " + first);
+//						while (entradaUsuario.isNT(nextRP.getLE())) {
+//							nextRP = findRP(nextRP.getLE());
+						List<String> newFirst = findFirstFromSymbol(nextRP);
+//						System.out.println("newFirst: " + newFirst);
+						rpFirst.addAll(newFirst);
+//						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				} else {
+					// Então é terminal e adiciona.
+					rpFirst.add(first);
+				}
+			}
+
+			// Adiciona na lista.
+			mapFirst.put(rp.getLE(), rpFirst);
+
+		}else {
+			return mapFirst.get(LE);
+		}
+		
+		return rpFirst;
 	}
 
 	public String conjuntoFollow() {
@@ -39,8 +127,8 @@ public class Gramatica {
 	public String analisePreditivaTabular() {
 		System.out.println("Tabela preditiva tabular");
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Reconhece a gramatica informada pelo usuário.
 	 * 

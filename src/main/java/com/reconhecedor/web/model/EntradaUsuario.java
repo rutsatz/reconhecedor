@@ -75,15 +75,23 @@ public class EntradaUsuario {
 				FactoryUtils.instantiateFactory(RegraProducao.class));
 
 		// para testes.
+
+		setNaoTerminais("Z, Y, X");
+		setTerminais("a, c, d");
+		setInicioProducao("Z");
+		regrasProducao.add(new RegraProducao("Z", "XYZ, d"));
+		regrasProducao.add(new RegraProducao("Y", "c, &"));
+		regrasProducao.add(new RegraProducao("X", "Y, a"));
+
 		// GR
-		setNaoTerminais("S, A, B, C, D");
-		setTerminais("a, b, c, d");
-		setInicioProducao("S");
-		regrasProducao.add(new RegraProducao("S", "aA"));
-		regrasProducao.add(new RegraProducao("A", "a, bB"));
-		regrasProducao.add(new RegraProducao("B", "b"));
-		regrasProducao.add(new RegraProducao("C", "cD, c"));
-		regrasProducao.add(new RegraProducao("D", "d"));
+//		setNaoTerminais("S, A, B, C, D");
+//		setTerminais("a, b, c, d");
+//		setInicioProducao("S");
+//		regrasProducao.add(new RegraProducao("S", "aA"));
+//		regrasProducao.add(new RegraProducao("A", "a, bB"));
+//		regrasProducao.add(new RegraProducao("B", "b, &"));
+//		regrasProducao.add(new RegraProducao("C", "cD, c"));
+//		regrasProducao.add(new RegraProducao("D", "d"));
 
 		// GLC
 		// setNaoTerminais("A, B");
@@ -106,6 +114,20 @@ public class EntradaUsuario {
 	}
 
 	/**
+	 * Verifica se o símbolo informado é um terminal.
+	 * 
+	 * @param String
+	 * @return true se for um Terminal.
+	 */
+	public boolean isTerminal(String simb) {
+		for (String string : listT) {
+			if (string.equals(simb))
+				return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Verifica se o símbolo informado é um NT.
 	 * 
 	 * @param String
@@ -117,6 +139,16 @@ public class EntradaUsuario {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Verifica se o símbolo é uma sentença vazia
+	 * 
+	 * @param simb
+	 * @return true se o símbolo for sentença vazia.
+	 */
+	public boolean isSentencaVazia(String simb) {
+		return simb.equals("&");
 	}
 
 	public String getNaoTerminais() {
