@@ -28,7 +28,7 @@ public class Gramatica {
 	@Autowired
 	private EntradaUsuario entradaUsuario;
 
-	public String conjuntoFirst() {
+	public HashMap<String, List<String>> conjuntoFirst() {
 
 		System.out.println("Método first");
 
@@ -67,13 +67,63 @@ public class Gramatica {
 
 		System.out.println(mapFirst);
 
+		return mapFirst;
+	}
+
+	/**
+	 * Busca as Regras de Produção e os corpos de derivações que contem o simbolodo
+	 * LD.
+	 * 
+	 * @return Lista de Regras de produção com os seus corpos de derivação que
+	 *         contem o símbolo no LD.
+	 * @throws Exception
+	 */
+	private List<RegraProducao> findAllRPcontaing(String simb) throws Exception {
+
+		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+
+		// Percorre todas as regras de produção.
+		for (RegraProducao rp : regrasProducao) {
+
+//			ArrayList<String> listComLD = new ArrayList<>(); // Guarda os corpos que contem NT.
+
+			int rpSize = rp.getListLD().length; // Tamanho de cada LD.
+
+			// Avalia todos os corpos do LD.
+			for (int i = 0; i < rpSize; i++) {
+				
+				String corpo = rp.getListLD()[i];
+				
+				// Se o LD possui NT, então precisa avaliar.
+				if(hasNT(corpo)) {
+//					listComLD.add(corpo); // Adiciona na lista
+					
+					String str = corpo.substring(i, ++i);
+					
+					// Se o simbolo
+					if(entradaUsuario.isNT(str)) {
+//						System.out.println();
+					}
+					
+				}
+				
+//				String first = simbolo.substring(0, 1); // Extrai o primeiro simbolo.
+//				// Se o simbolo avaliado for terminal.
+//				if (entradaUsuario.isTerminal(first) || entradaUsuario.isSentencaVazia(first)) {
+//					rpFirst.add(first);
+//					totTerminais++;
+//				}
+			}
+
+		}
 		return null;
+//		throw new Exception("Nenhuma Regra de Produção localizada para o símbolo " + simb);
 	}
 
 	private List<String> findFirstFromSymbol(RegraProducao rp) {
 
-//		System.out.println("findFirstFromSymbol receiving rp: " + rp);
-		
+		// System.out.println("findFirstFromSymbol receiving rp: " + rp);
+
 		ArrayList<String> rpFirst = new ArrayList<>(); // Guarda os simbolos first.
 
 		String LE = rp.getLE();
@@ -91,13 +141,13 @@ public class Gramatica {
 					try {
 						// Busca a próxima RP que ele deriva.
 						RegraProducao nextRP = findRP(first);
-//						System.out.println("Buscando first: " + first);
-//						while (entradaUsuario.isNT(nextRP.getLE())) {
-//							nextRP = findRP(nextRP.getLE());
+						// System.out.println("Buscando first: " + first);
+						// while (entradaUsuario.isNT(nextRP.getLE())) {
+						// nextRP = findRP(nextRP.getLE());
 						List<String> newFirst = findFirstFromSymbol(nextRP);
-//						System.out.println("newFirst: " + newFirst);
+						// System.out.println("newFirst: " + newFirst);
 						rpFirst.addAll(newFirst);
-//						}
+						// }
 
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -112,15 +162,24 @@ public class Gramatica {
 			// Adiciona na lista.
 			mapFirst.put(rp.getLE(), rpFirst);
 
-		}else {
+		} else {
 			return mapFirst.get(LE);
 		}
-		
+
 		return rpFirst;
 	}
 
-	public String conjuntoFollow() {
+	public String conjuntoFollow() throws Exception {
 		System.out.println("Método follow");
+
+		// Percorre todas as regras de produção.
+		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
+
+			// Busca a lista de RPs e os LD que tem o simbolo.
+			List<RegraProducao> listLD = findAllRPcontaing(rp.getLE());
+
+		}
+
 		return null;
 	}
 

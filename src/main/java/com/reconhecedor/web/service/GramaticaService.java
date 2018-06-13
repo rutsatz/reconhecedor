@@ -1,5 +1,8 @@
 package com.reconhecedor.web.service;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,23 +46,24 @@ public class GramaticaService {
 
 	/**
 	 * Serviço de transformação em GLC.
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public Sentenca transformacaoGLC() throws Exception{
+	public Sentenca transformacaoGLC() throws Exception {
 		return gramatica.transformacaoGLC();
 	}
-	
+
 	/**
 	 * Gera Conjunto First.
 	 * 
 	 * @return Os dados da tabela.
 	 * @throws Exception
 	 */
-	public String conjuntoFirst() throws Exception {
+	public HashMap<String, List<String>> conjuntoFirst() throws Exception {
 		return gramatica.conjuntoFirst();
-	}	
-	
+	}
+
 	/**
 	 * Gera Conjunto Follow.
 	 * 
@@ -69,7 +73,7 @@ public class GramaticaService {
 	public String conjuntoFollow() throws Exception {
 		return gramatica.conjuntoFollow();
 	}
-	
+
 	/**
 	 * Serviço de Análise Preditiva Tabular.
 	 * 
@@ -79,7 +83,7 @@ public class GramaticaService {
 	public String analisePreditivaTabular() throws Exception {
 		return gramatica.analisePreditivaTabular();
 	}
-	
+
 	public Gramatica getGramatica() {
 		return gramatica;
 	}

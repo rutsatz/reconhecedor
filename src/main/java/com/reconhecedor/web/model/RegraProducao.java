@@ -23,7 +23,7 @@ public class RegraProducao {
 	private String LE;
 
 	@NotEmpty(message = "Lado direito da produção deve ser informado!")
-	@Pattern(regexp = "[\\w+-/*//&| ]{1,}", message = "Lado Direito da produção somente permite letras, números ou os sinais de +, -, *, /, |, _ e &")
+	@Pattern(regexp = "[\\w+-/*//&| ()]{1,}", message = "Lado Direito da produção somente permite letras, números ou os sinais de +, -, *, /, |, _, &, ( e )")
 	private String LD;
 
 	// Vetor com a lista de todos operadores.
