@@ -76,22 +76,43 @@ public class EntradaUsuario {
 
 		// para testes.
 
-		setNaoTerminais("Z, Y, X");
-		setTerminais("a, c, d");
-		setInicioProducao("Z");
-		regrasProducao.add(new RegraProducao("Z", "XYZ, d"));
-		regrasProducao.add(new RegraProducao("Y", "c, &"));
-		regrasProducao.add(new RegraProducao("X", "Y, a"));
+//		 setNaoTerminais("Z, Y, X");
+//		 setTerminais("a, c, d");
+//		 setInicioProducao("Z");
+//		 regrasProducao.add(new RegraProducao("Z", "XYZ, d"));
+//		 regrasProducao.add(new RegraProducao("Y", "c, &"));
+//		 regrasProducao.add(new RegraProducao("X", "Y, a"));
+
+//		 regrasProducao.add(new RegraProducao("Z", "Y, d"));
+//		 regrasProducao.add(new RegraProducao("Y", "Xc, &"));
+//		 regrasProducao.add(new RegraProducao("X", "aZ, a"));
+		
+//		 setNaoTerminais("S, A, B");
+//		 setTerminais("(, ), a, b, :");
+//		 setInicioProducao("S");
+//		 regrasProducao.add(new RegraProducao("S", "(A), b"));
+//		 regrasProducao.add(new RegraProducao("A", "B:A, B"));
+//		 regrasProducao.add(new RegraProducao("B", "a, &"));
+//		
+
+		setNaoTerminais("D, E, F, T, G");
+		setTerminais("v, ;, :, i, a");
+		setInicioProducao("D");
+		regrasProducao.add(new RegraProducao("D", "vE"));
+		regrasProducao.add(new RegraProducao("E", "F;E, &"));
+		regrasProducao.add(new RegraProducao("F", ":T"));
+		regrasProducao.add(new RegraProducao("T", "i"));
+		regrasProducao.add(new RegraProducao("G", "a"));
 
 		// GR
-//		setNaoTerminais("S, A, B, C, D");
-//		setTerminais("a, b, c, d");
-//		setInicioProducao("S");
-//		regrasProducao.add(new RegraProducao("S", "aA"));
-//		regrasProducao.add(new RegraProducao("A", "a, bB"));
-//		regrasProducao.add(new RegraProducao("B", "b, &"));
-//		regrasProducao.add(new RegraProducao("C", "cD, c"));
-//		regrasProducao.add(new RegraProducao("D", "d"));
+		// setNaoTerminais("S, A, B, C, D");
+		// setTerminais("a, b, c, d");
+		// setInicioProducao("S");
+		// regrasProducao.add(new RegraProducao("S", "aA"));
+		// regrasProducao.add(new RegraProducao("A", "a, bB"));
+		// regrasProducao.add(new RegraProducao("B", "b, &"));
+		// regrasProducao.add(new RegraProducao("C", "cD, c"));
+		// regrasProducao.add(new RegraProducao("D", "d"));
 
 		// GLC
 		// setNaoTerminais("A, B");

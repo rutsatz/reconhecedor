@@ -1,7 +1,10 @@
 package com.reconhecedor.web.model;
 
+import static org.mockito.Matchers.contains;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -18,9 +21,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class Gramatica {
 
+	/**
+	 * Tipo de gramatica conforme a Hierarquia de Chomsky.
+	 */
 	private TipoGramatica tipoGramatica;
 
+	/**
+	 * Lista de First da gramatica.
+	 */
 	HashMap<String, List<String>> mapFirst = new HashMap<>();
+
+	/**
+	 * Lista de Follow da gramatica.
+	 */
+	HashMap<String, List<String>> mapFollow = new HashMap<>();
 
 	/**
 	 * Guarda as strings digitadas pelo usuário.
@@ -28,6 +42,13 @@ public class Gramatica {
 	@Autowired
 	private EntradaUsuario entradaUsuario;
 
+	private static int qtdIteracoes = 0;
+
+	/**
+	 * Calcula o conjunto First da gramatica.
+	 * 
+	 * @return Lista do conjunto First.
+	 */
 	public HashMap<String, List<String>> conjuntoFirst() {
 
 		System.out.println("Método first");
@@ -71,55 +92,162 @@ public class Gramatica {
 	}
 
 	/**
-	 * Busca as Regras de Produção e os corpos de derivações que contem o simbolodo
-	 * LD.
+	 * Realiza a busca do follow do NT informado pelo parâmetro.
 	 * 
-	 * @return Lista de Regras de produção com os seus corpos de derivação que
-	 *         contem o símbolo no LD.
+	 * @return Lista de simbolos Follow.
 	 * @throws Exception
 	 */
-	private List<RegraProducao> findAllRPcontaing(String simb) throws Exception {
-
+	private List<String> buscaFollow(final String simb) throws Exception {
+		// System.out.println("buscaFollow de " + simb);
 		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
+
+		// Verifica se o follow que estou procurando já não está na lista.
+		if (mapFollow.get(simb) != null) {
+			return mapFollow.get(simb);
+		}
+
+		// Guarda os simbolos follow temporariamente.
+		ArrayList<String> followList = new ArrayList<>();
 
 		// Percorre todas as regras de produção.
 		for (RegraProducao rp : regrasProducao) {
-
-//			ArrayList<String> listComLD = new ArrayList<>(); // Guarda os corpos que contem NT.
 
 			int rpSize = rp.getListLD().length; // Tamanho de cada LD.
 
 			// Avalia todos os corpos do LD.
 			for (int i = 0; i < rpSize; i++) {
-				
-				String corpo = rp.getListLD()[i];
-				
-				// Se o LD possui NT, então precisa avaliar.
-				if(hasNT(corpo)) {
-//					listComLD.add(corpo); // Adiciona na lista
-					
-					String str = corpo.substring(i, ++i);
-					
-					// Se o simbolo
-					if(entradaUsuario.isNT(str)) {
-//						System.out.println();
-					}
-					
-				}
-				
-//				String first = simbolo.substring(0, 1); // Extrai o primeiro simbolo.
-//				// Se o simbolo avaliado for terminal.
-//				if (entradaUsuario.isTerminal(first) || entradaUsuario.isSentencaVazia(first)) {
-//					rpFirst.add(first);
-//					totTerminais++;
-//				}
-			}
 
+				String corpo = rp.getListLD()[i];
+				int tamCorpo = corpo.length();
+
+				// Se o LD possui NT, então precisa avaliar.
+				if (hasNT(corpo)) {
+
+					// Procura todos os NT dentro daquele corpo.
+					for (int x = 0; x < tamCorpo; x++) {
+						// Extrai cada simbolo.
+						String str = corpo.substring(x, x + 1);
+						// System.out.println("str: " + str);
+						// Se o simbolo for um NT
+						if (entradaUsuario.isNT(str)) {
+							
+							// System.out.println("corpo: " + corpo);
+							// System.out.println("NT: " + str);
+							// Se não tem o follow na lista.
+							if (mapFollow.get(str) == null) {
+
+								// System.out.println("mapFollow.get(" + str + ") == null");
+
+								// procura o follow
+
+								// Se o terminal é o último elemento, então aplicamos
+								// a regra aX, em que os follow de X são os follow do LE
+								// da produção.
+								if (x + 1 == tamCorpo) {
+									 System.out.println("Procurando follow de " + rp.getLE());
+									this.qtdIteracoes++;
+
+									if (this.qtdIteracoes == 500) {
+										throw new Exception("Recursão detectada para o símbolo " + str + " ou " + rp.getLE());
+									}
+
+									// Procura o follow dele.
+
+									// Se estou procurando o follow dele mesmo,
+									// no caso do follow eu ignoro.
+									if (simb.equals(rp.getLE())) {
+										continue;
+									}
+
+									List<String> newFollow = buscaFollow(rp.getLE());
+									// System.out.println("newFollow de " + str + ": " + newFollow);
+									// Adiciona na lista de follows
+									// followList.addAll(newFollow);
+									return newFollow;
+
+								} else {
+									// Não atingiu o tamanho, então ainda está no
+									// meio da expressão, então avalia o caracter ao lado direito.
+									String sideSimb = corpo.substring(x + 1, x + 2);
+									// System.out.println("sideSimb: " + sideSimb);
+									// Se o simb ao lado direito for terminal, aí é caixa.
+									if (entradaUsuario.isTerminal(sideSimb)) {
+										followList.add(sideSimb);
+									} else if (entradaUsuario.isNT(sideSimb)) {
+										// Se for NT, então aplicamos a regra
+										// aXB, em que o Follow(X) é o First(B).
+										List<String> listFirst = mapFirst.get(sideSimb);
+
+										// System.out.println("mapFirst.get("+sideSimb+")"+mapFirst.get(sideSimb));
+
+										// System.out.println("listFirst: " + listFirst);
+										// System.out.println("followList: " + followList);
+										// Como já temos o first calculado, basta buscar
+										// o first na lista.
+										// followList.addAll(listFirst);
+										followList = (ArrayList<String>) juntaListas(listFirst, followList);
+										// return followList;
+										// System.out.println("followList: " + followList);
+									}
+								}
+							} else {
+								// Já encontrou o follow. (Já está na lista)
+								// rpFirst.add(first);
+							}
+							
+						
+							
+							
+						}
+					}
+				}
+
+				// String first = simbolo.substring(0, 1); // Extrai o primeiro simbolo.
+				// // Se o simbolo avaliado for terminal.
+				// if (entradaUsuario.isTerminal(first) ||
+				// entradaUsuario.isSentencaVazia(first)) {
+				// rpFirst.add(first);
+				// totTerminais++;
+				// }
+			}
+			// Se for o inicio de producao, adiciona o marcador.
+			if (rp.getLE().equals(entradaUsuario.getInicioProducao())) {
+				if (!followList.contains("$")) {
+					followList.add("$");
+				}
+			}
 		}
-		return null;
-//		throw new Exception("Nenhuma Regra de Produção localizada para o símbolo " + simb);
+		// System.out.println("return " + followList);
+
+		return followList;
+		// throw new Exception("Nenhuma Regra de Produção localizada para o símbolo " +
+		// simb);
 	}
 
+	private List<String> juntaListas(List<String> orig, List<String> dest) {
+		ArrayList<String> novaLista = new ArrayList<>();
+
+		orig.forEach((e) -> {
+			if (!novaLista.contains(e)) {
+				novaLista.add(e);
+			}
+		});
+
+		dest.forEach((e) -> {
+			if (!novaLista.contains(e)) {
+				novaLista.add(e);
+			}
+		});
+		return novaLista;
+	}
+
+	/**
+	 * Busca a lista de First da RP informada no parâmetro.
+	 * 
+	 * @param Regra
+	 *            de Producao desejada.
+	 * @return Lista com os simbolos First da RP.
+	 */
 	private List<String> findFirstFromSymbol(RegraProducao rp) {
 
 		// System.out.println("findFirstFromSymbol receiving rp: " + rp);
@@ -169,16 +297,34 @@ public class Gramatica {
 		return rpFirst;
 	}
 
+	/**
+	 * Monta o conjunto follow da gramatica.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public String conjuntoFollow() throws Exception {
 		System.out.println("Método follow");
 
 		// Percorre todas as regras de produção.
 		for (RegraProducao rp : entradaUsuario.getRegrasProducao()) {
 
-			// Busca a lista de RPs e os LD que tem o simbolo.
-			List<RegraProducao> listLD = findAllRPcontaing(rp.getLE());
+			this.qtdIteracoes = 0;
 
+			// Busca a lista de follow para cada NT.
+			List<String> listFollow = new ArrayList<>();
+
+			if (rp.getLE().equals(entradaUsuario.getInicioProducao())) {
+
+				listFollow.add("$");
+			} else {
+				listFollow = buscaFollow(rp.getLE());
+			}
+			// Adiciona a lista dos follows no map.
+			mapFollow.put(rp.getLE(), listFollow);
 		}
+
+		System.out.println(mapFollow);
 
 		return null;
 	}
