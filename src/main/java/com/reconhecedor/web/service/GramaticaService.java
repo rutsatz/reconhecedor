@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.reconhecedor.web.model.EntradaUsuario;
 import com.reconhecedor.web.model.Gramatica;
+import com.reconhecedor.web.model.PrecedenciaDeOperadores;
 import com.reconhecedor.web.model.Sentenca;
 import com.reconhecedor.web.model.TipoGramatica;
 
@@ -22,6 +23,9 @@ public class GramaticaService {
 
 	@Autowired
 	private Gramatica gramatica;
+
+	@Autowired
+	private PrecedenciaDeOperadores precedenciaDeOperadores;
 
 	/**
 	 * Serviço de reconhecer uma gramática.
@@ -82,6 +86,26 @@ public class GramaticaService {
 	 */
 	public String analisePreditivaTabular() throws Exception {
 		return gramatica.analisePreditivaTabular();
+	}
+
+	/**
+	 * Análise Bottom-up - Precedência de operadores.
+	 * <p>
+	 * Busca o conjunto de primeiros terminais
+	 * </p>
+	 */
+	public void buscarPrimeirosTerminais() {
+		precedenciaDeOperadores.buscarPrimeirosTerminais();
+	}
+
+	/**
+	 * Análise Bottom-up - Precedência de operadores.
+	 * <p>
+	 * Busca o conjunto de últimos terminais
+	 * </p>
+	 */
+	public void buscarUltimosTerminais() {
+		precedenciaDeOperadores.buscarUltimosTerminais();
 	}
 
 	public Gramatica getGramatica() {

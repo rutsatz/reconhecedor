@@ -76,33 +76,33 @@ public class EntradaUsuario {
 
 		// para testes.
 
-//		 setNaoTerminais("Z, Y, X");
-//		 setTerminais("a, c, d");
-//		 setInicioProducao("Z");
-//		 regrasProducao.add(new RegraProducao("Z", "XYZ, d"));
-//		 regrasProducao.add(new RegraProducao("Y", "c, &"));
-//		 regrasProducao.add(new RegraProducao("X", "Y, a"));
+		// setNaoTerminais("Z, Y, X");
+		// setTerminais("a, c, d");
+		// setInicioProducao("Z");
+		// regrasProducao.add(new RegraProducao("Z", "XYZ, d"));
+		// regrasProducao.add(new RegraProducao("Y", "c, &"));
+		// regrasProducao.add(new RegraProducao("X", "Y, a"));
 
-//		 regrasProducao.add(new RegraProducao("Z", "Y, d"));
-//		 regrasProducao.add(new RegraProducao("Y", "Xc, &"));
-//		 regrasProducao.add(new RegraProducao("X", "aZ, a"));
-		
-//		 setNaoTerminais("S, A, B");
-//		 setTerminais("(, ), a, b, :");
-//		 setInicioProducao("S");
-//		 regrasProducao.add(new RegraProducao("S", "(A), b"));
-//		 regrasProducao.add(new RegraProducao("A", "B:A, B"));
-//		 regrasProducao.add(new RegraProducao("B", "a, &"));
-//		
+		// regrasProducao.add(new RegraProducao("Z", "Y, d"));
+		// regrasProducao.add(new RegraProducao("Y", "Xc, &"));
+		// regrasProducao.add(new RegraProducao("X", "aZ, a"));
 
-		setNaoTerminais("D, E, F, T, G");
-		setTerminais("v, ;, :, i, a");
-		setInicioProducao("D");
-		regrasProducao.add(new RegraProducao("D", "vE"));
-		regrasProducao.add(new RegraProducao("E", "F;E, &"));
-		regrasProducao.add(new RegraProducao("F", ":T"));
-		regrasProducao.add(new RegraProducao("T", "i"));
-		regrasProducao.add(new RegraProducao("G", "a"));
+		// setNaoTerminais("S, A, B");
+		// setTerminais("(, ), a, b, :");
+		// setInicioProducao("S");
+		// regrasProducao.add(new RegraProducao("S", "(A), b"));
+		// regrasProducao.add(new RegraProducao("A", "B:A, B"));
+		// regrasProducao.add(new RegraProducao("B", "a, &"));
+		//
+
+		// setNaoTerminais("D, E, F, T, G");
+		// setTerminais("v, ;, :, i, a");
+		// setInicioProducao("D");
+		// regrasProducao.add(new RegraProducao("D", "vE"));
+		// regrasProducao.add(new RegraProducao("E", "F;E, &"));
+		// regrasProducao.add(new RegraProducao("F", ":T"));
+		// regrasProducao.add(new RegraProducao("T", "i"));
+		// regrasProducao.add(new RegraProducao("G", "a"));
 
 		// GR
 		// setNaoTerminais("S, A, B, C, D");
@@ -131,6 +131,15 @@ public class EntradaUsuario {
 		// setTerminais("a,b");
 		// setInicioProducao("S");
 		// regrasProducao.add(new RegraProducao("AA", "b , &"));
+
+		// Análise Ascendente
+		setNaoTerminais("E, T, F, P");
+		setTerminais("+, *, ^, (, ), i");
+		setInicioProducao("E");
+		regrasProducao.add(new RegraProducao("E", "E+T, T"));
+		regrasProducao.add(new RegraProducao("T", "T*F, F"));
+		regrasProducao.add(new RegraProducao("F", "P^F, P"));
+		regrasProducao.add(new RegraProducao("P", "(E), i"));
 
 	}
 

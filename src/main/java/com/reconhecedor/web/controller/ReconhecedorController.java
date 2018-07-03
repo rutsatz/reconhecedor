@@ -71,6 +71,9 @@ public class ReconhecedorController {
 		} else {
 			msg = "Gramática reconhecida: " + tipoGramatica.getDescricao();
 			mv.addObject("reconheceu", true);
+			
+			// Passos de Análise Preditiva Tabular.
+			gramaticaService.buscarPrimeirosTerminais();
 		}
 
 		mv.addObject("mensagem", msg);

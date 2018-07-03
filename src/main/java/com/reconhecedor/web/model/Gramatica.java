@@ -1,10 +1,7 @@
 package com.reconhecedor.web.model;
 
-import static org.mockito.Matchers.contains;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -130,7 +127,7 @@ public class Gramatica {
 						// System.out.println("str: " + str);
 						// Se o simbolo for um NT
 						if (entradaUsuario.isNT(str)) {
-							
+
 							// System.out.println("corpo: " + corpo);
 							// System.out.println("NT: " + str);
 							// Se não tem o follow na lista.
@@ -144,11 +141,12 @@ public class Gramatica {
 								// a regra aX, em que os follow de X são os follow do LE
 								// da produção.
 								if (x + 1 == tamCorpo) {
-									 System.out.println("Procurando follow de " + rp.getLE());
+									System.out.println("Procurando follow de " + rp.getLE());
 									this.qtdIteracoes++;
 
 									if (this.qtdIteracoes == 500) {
-										throw new Exception("Recursão detectada para o símbolo " + str + " ou " + rp.getLE());
+										throw new Exception(
+												"Recursão detectada para o símbolo " + str + " ou " + rp.getLE());
 									}
 
 									// Procura o follow dele.
@@ -194,10 +192,7 @@ public class Gramatica {
 								// Já encontrou o follow. (Já está na lista)
 								// rpFirst.add(first);
 							}
-							
-						
-							
-							
+
 						}
 					}
 				}
@@ -873,7 +868,7 @@ public class Gramatica {
 	 * @return RegraProducao que contém o símbolo informado.
 	 * @throws Exception
 	 */
-	private RegraProducao findRP(String simb) throws Exception {
+	RegraProducao findRP(String simb) throws Exception {
 
 		List<RegraProducao> regrasProducao = entradaUsuario.getRegrasProducao();
 
@@ -881,9 +876,18 @@ public class Gramatica {
 		for (RegraProducao rp : regrasProducao) {
 			// Percorre as regras do LE.
 			for (String lEStr : rp.getListLE()) {
-				// Se encontrou o inicio de produção
-				if (lEStr.matches(simb)) {
-					return rp;
+				// Se for parenteses, deve adicionar o caracter de escape para a
+				// expressão regular funcionar corretamente.
+				if (simb.equals("(") || simb.equals(")")) {
+					// Se encontrou o inicio de produção
+					if (lEStr.matches("\\" + simb)) {
+						return rp;
+					}
+				} else {
+					// Se encontrou o inicio de produção
+					if (lEStr.matches(simb)) {
+						return rp;
+					}
 				}
 			}
 		}
