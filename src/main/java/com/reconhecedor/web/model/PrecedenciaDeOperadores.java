@@ -61,14 +61,15 @@ public class PrecedenciaDeOperadores {
 		for (int i = 0; i < rpSize; i++) {
 			String corpo = rp.getListLD()[i];
 			// Se tiver mais simbolos, analiso.
-			if (corpo.length() >= 2) {
+			if (corpo.length() >= 3) {
 
-				String NT = corpo.substring(0, 1); // Extrai o NT da esquerda.
+				String eNT = corpo.substring(0, 1); // Extrai o NT da esquerda.
 				String operador = corpo.substring(1, 2); // Extrai o operador.
+				String dNT = corpo.substring(2, 3); // Extrai o NT da direita.
 				// Se o operador avaliado for terminal.
 				if (entradaUsuario.isTerminal(operador)) {
 					// Verifica se é o NT que estamos analisando.
-					if (NT.equals(rp.getLE())) {
+					if (eNT.equals(rp.getLE()) || dNT.equals(rp.getLE())) {
 						if (!rpPrimeiros.contains(operador)) {
 							// Adiciona na lista de primeiros
 							rpPrimeiros.add(operador);
@@ -78,8 +79,8 @@ public class PrecedenciaDeOperadores {
 				} else {
 
 					// se o simbolo da esquerda for parenteses, não precisa expandir.
-					if (NT.equals("(") || NT.equals(")")) {
-						rpPrimeiros.add(NT);
+					if (eNT.equals("(") || eNT.equals(")")) {
+						rpPrimeiros.add(eNT);
 					} else {
 
 						// se for um NT, preciso expandir.
@@ -91,7 +92,7 @@ public class PrecedenciaDeOperadores {
 							String naoTerminal = operador;
 							nextRP = gramatica.findRP(naoTerminal);
 
-//							System.out.println("Buscando nextRP: " + nextRP);
+							// System.out.println("Buscando nextRP: " + nextRP);
 							List<String> newFirst = expandirPrimeiros(nextRP);
 							// System.out.println("newFirst: " + newFirst);
 							rpPrimeiros.addAll(newFirst);
@@ -112,13 +113,16 @@ public class PrecedenciaDeOperadores {
 					try {
 						nextRP = gramatica.findRP(naoTerminal);
 
-//						System.out.println("Buscando nextRP: " + nextRP);
+						// System.out.println("Buscando nextRP: " + nextRP);
 						List<String> newFirst = expandirPrimeiros(nextRP);
 						// System.out.println("newFirst: " + newFirst);
 						rpPrimeiros.addAll(newFirst);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				} else {
+					// então é um terminal sozinho e precisamos adicionar na lista
+					rpPrimeiros.add(corpo);
 				}
 
 			}
